@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-300: #93c5fd;
+  --color-brand-400: #60a5fa;
+  --color-brand-500: #3b82f6;
+  --color-brand-600: #2563eb;
+  --color-accent-300: #67e8f9;
+  --color-accent-400: #22d3ee;
+  --color-accent-500: #06b6d4;
+  --color-accent-600: #0891b2;
+  --color-correct: #22c55e;
+  --color-correct-bg: #052e16;
+  --color-incorrect: #ef4444;
+  --color-incorrect-bg: #450a0a;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --animate-fade-in: fade-in 0.3s ease-out;
+  --animate-shake: shake 0.4s ease-in-out;
+  --animate-slide-in: slide-in 0.3s ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: linear-gradient(135deg, #0a0e1a 0%, #0f1a2e 30%, #0a1420 70%, #060a12 100%);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}

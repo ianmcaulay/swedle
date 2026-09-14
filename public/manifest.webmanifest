@@ -1,0 +1,18 @@
+{
+  "name": "swedle",
+  "short_name": "swedle",
+  "description": "A daily puzzle for software engineers — quick games covering estimation, system design, and CS fundamentals.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0a0e1a",
+  "theme_color": "#3b82f6",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

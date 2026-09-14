@@ -1,0 +1,494 @@
+[
+  {
+    "day": 0,
+    "format": "mc",
+    "questions": [
+      {
+        "question": "What is the time complexity of binary search on a sorted array of n elements?",
+        "options": ["O(n)", "O(log n)", "O(n log n)", "O(1)"],
+        "correctIndex": 1,
+        "explanation": "Each comparison eliminates half the remaining search space, so the number of steps grows with log n."
+      },
+      {
+        "question": "Which data structure gives O(1) average-case lookup, insert, and delete?",
+        "options": ["Array", "Linked list", "Hash table", "Balanced BST"],
+        "correctIndex": 2,
+        "explanation": "A hash table maps keys directly to buckets via a hash function, giving O(1) average-case operations (though O(n) worst case under heavy collisions)."
+      },
+      {
+        "question": "What's the primary cause of a hash table degrading toward O(n) lookup in the worst case?",
+        "options": ["Too many buckets", "Poor hash function causing many collisions", "Using integer keys", "A small number of stored items"],
+        "correctIndex": 1,
+        "explanation": "When many keys collide into the same bucket, lookups within that bucket become a linear scan instead of a constant-time jump."
+      },
+      {
+        "question": "Which of these sorting algorithms has O(n log n) worst-case time complexity?",
+        "options": ["Quicksort", "Bubble sort", "Merge sort", "Insertion sort"],
+        "correctIndex": 2,
+        "explanation": "Merge sort always splits and merges in O(n log n), regardless of input. Quicksort's worst case is O(n²); bubble and insertion sort are O(n²) in general."
+      },
+      {
+        "question": "A recursive function has call depth n and does O(1) extra work per call (no other allocations). What's its space complexity?",
+        "options": ["O(1)", "O(log n)", "O(n)", "O(n²)"],
+        "correctIndex": 2,
+        "explanation": "Each recursive call adds a frame to the call stack, so a depth-n recursion uses O(n) stack space even if each frame itself is tiny."
+      }
+    ]
+  },
+  {
+    "day": 1,
+    "format": "connections",
+    "groups": [
+      {
+        "value": "O(1)",
+        "label": "O(1) — constant time",
+        "difficulty": 1,
+        "expressions": [
+          "Array index access, arr[i]",
+          "Hash table lookup (average case)",
+          "Push or pop on a stack",
+          "Checking if a number is even"
+        ]
+      },
+      {
+        "value": "O(log n)",
+        "label": "O(log n) — logarithmic time",
+        "difficulty": 2,
+        "expressions": [
+          "Binary search in a sorted array",
+          "Lookup in a balanced BST",
+          "Insert into a balanced BST",
+          "Binary exponentiation (computing x^n)"
+        ]
+      },
+      {
+        "value": "O(n)",
+        "label": "O(n) — linear time",
+        "difficulty": 3,
+        "expressions": [
+          "Linear scan through an unsorted array",
+          "Traversing a linked list end to end",
+          "Finding the max element in an array",
+          "Copying an array of n elements"
+        ]
+      },
+      {
+        "value": "O(n log n)",
+        "label": "O(n log n) — linearithmic time",
+        "difficulty": 4,
+        "expressions": [
+          "Merge sort",
+          "Heapsort",
+          "Sorting with a language's built-in sort",
+          "Quicksort (average case)"
+        ]
+      }
+    ]
+  },
+  {
+    "day": 2,
+    "format": "tf",
+    "statements": [
+      {
+        "statement": "A B-tree index makes range queries (e.g., WHERE age > 30) efficient.",
+        "answer": true,
+        "explanation": "B-trees keep keys in sorted order across their leaves, so a range scan just walks a contiguous portion of the tree."
+      },
+      {
+        "statement": "NoSQL databases never support ACID transactions.",
+        "answer": false,
+        "explanation": "Many NoSQL systems support ACID transactions in at least some scope — e.g., MongoDB (since 4.0) and DynamoDB both offer transactional writes."
+      },
+      {
+        "statement": "In a typical leader-based replication setup, writes still go to the primary/leader node.",
+        "answer": true,
+        "explanation": "Read replicas serve reads, but writes are routed to the leader, which then propagates changes to replicas."
+      },
+      {
+        "statement": "Vertical scaling means adding more machines to a system rather than more resources to one.",
+        "answer": false,
+        "explanation": "That describes horizontal scaling. Vertical scaling means adding more CPU/RAM/disk to a single existing machine."
+      },
+      {
+        "statement": "A Bloom filter never produces false negatives, but can produce false positives.",
+        "answer": true,
+        "explanation": "If a Bloom filter says an element is 'definitely not present,' that's always correct. If it says 'possibly present,' it might be wrong."
+      },
+      {
+        "statement": "Consistent hashing is primarily used to reduce data movement when nodes are added or removed from a distributed system.",
+        "answer": true,
+        "explanation": "Because keys and nodes both live on the same hash ring, only the keys near a changed node need to move — not the entire dataset."
+      },
+      {
+        "statement": "The CAP theorem states a distributed system can simultaneously guarantee Consistency, Availability, and Partition tolerance at all times.",
+        "answer": false,
+        "explanation": "CAP says that during an actual network partition, you must choose between consistency and availability — you can't have all three at once."
+      },
+      {
+        "statement": "Sharding a table by a poorly chosen key, like a monotonically increasing ID, can create hot shards.",
+        "answer": true,
+        "explanation": "If new IDs always increase, all new writes land on the newest shard, overloading it while older shards sit idle."
+      },
+      {
+        "statement": "A write-through cache writes to the cache and lets the database update happen later, asynchronously.",
+        "answer": false,
+        "explanation": "That describes write-behind (write-back) caching. Write-through writes to the database synchronously as part of the same operation."
+      },
+      {
+        "statement": "Optimistic locking typically checks a version number before committing a write, to detect conflicting concurrent updates.",
+        "answer": true,
+        "explanation": "The writer reads a version, and the update only succeeds if the version hasn't changed — otherwise it's treated as a conflict and retried."
+      }
+    ]
+  },
+  {
+    "day": 3,
+    "format": "clues",
+    "term": "Consistent hashing",
+    "clues": [
+      "Used to distribute load across a changing number of nodes",
+      "Minimizes data movement when nodes are added or removed",
+      "Commonly visualized as a ring",
+      "Used by systems like DynamoDB, Cassandra, and many CDN load balancers"
+    ],
+    "options": ["Consistent hashing", "Round-robin balancing", "Rendezvous hashing", "Range-based sharding"],
+    "correctIndex": 0,
+    "explanation": "Consistent hashing maps both nodes and keys onto a hash ring. When a node joins or leaves, only the keys between it and its neighbor need to move, instead of reshuffling everything the way plain modulo hashing would. Rendezvous hashing is a real, related alternative that solves the same problem differently (each key picks the node that scores highest for it, no ring required)."
+  },
+  {
+    "day": 4,
+    "format": "estimate",
+    "prompt": "A backend service logs one small JSON event (~500 bytes) per user action. The product has 5 million daily active users, averaging 20 actions/day each. Roughly how many GB of raw log data does it generate per day?",
+    "trueValue": 50,
+    "unit": "GB/day",
+    "explanation": "5M users × 20 actions ≈ 100M events/day. 100M events × 500 bytes ≈ 50,000,000,000 bytes = 50 GB/day. The habit that matters: multiply users × actions/user to get an event count first, then multiply by bytes/event — don't jump straight to a guess."
+  },
+  {
+    "day": 5,
+    "format": "mc",
+    "questions": [
+      {
+        "question": "You need a store for a feature where users query recent posts by time range AND by tag, both indexed efficiently. Read-heavy, moderate writes. What's the more natural first choice?",
+        "options": ["A key-value store with only primary-key lookups", "A relational database with composite indexes", "A pure in-memory cache with no persistence", "A message queue"],
+        "correctIndex": 1,
+        "explanation": "Multi-dimensional, range-friendly queries are exactly what relational databases with composite indexes are built for. A KV store or queue doesn't naturally support this query shape."
+      },
+      {
+        "question": "A service sometimes receives duplicate requests from a retrying client (e.g., after a timeout). What's the standard technique to make an operation safe to retry?",
+        "options": ["Rate limiting", "Idempotency keys", "Circuit breaking", "Load shedding"],
+        "correctIndex": 1,
+        "explanation": "An idempotency key lets the server recognize 'I've already done this' and return the original result instead of repeating the side effect (like double-charging a payment)."
+      },
+      {
+        "question": "Which caching approach risks serving stale data the longest after an underlying update?",
+        "options": ["Write-through with immediate invalidation", "Time-based expiration (TTL) with a long TTL", "Cache-aside with invalidation on write", "Write-behind with immediate invalidation"],
+        "correctIndex": 1,
+        "explanation": "A long TTL means the cache doesn't actively learn about the update — it just keeps serving the old value until the TTL naturally expires."
+      },
+      {
+        "question": "A single database is becoming a write bottleneck as traffic grows. Which technique most directly increases write throughput by spreading writes across machines?",
+        "options": ["Adding a read replica", "Sharding by a well-chosen key", "Adding a CDN", "Increasing cache TTL"],
+        "correctIndex": 1,
+        "explanation": "Read replicas help read throughput, not writes. Sharding splits the dataset (and its writes) across multiple independent database instances."
+      },
+      {
+        "question": "Which pattern helps prevent one failing downstream service from cascading failures across an entire system?",
+        "options": ["Circuit breaker", "Consistent hashing", "Write-ahead log", "Vertical scaling"],
+        "correctIndex": 0,
+        "explanation": "A circuit breaker detects repeated failures from a dependency and 'opens,' failing fast instead of letting requests pile up waiting on a dependency that's already struggling."
+      }
+    ]
+  },
+  {
+    "day": 6,
+    "format": "connections",
+    "groups": [
+      {
+        "value": "ns",
+        "label": "Nanoseconds (~1-10 ns)",
+        "difficulty": 1,
+        "expressions": [
+          "L1 cache reference",
+          "L2 cache reference",
+          "Branch misprediction",
+          "Mutex lock/unlock"
+        ]
+      },
+      {
+        "value": "us",
+        "label": "Microseconds (~1-100 μs)",
+        "difficulty": 2,
+        "expressions": [
+          "Main memory (RAM) reference",
+          "Compress 1 KB with a fast compressor",
+          "SSD random read",
+          "Send 1 KB over a 1 Gbps network link"
+        ]
+      },
+      {
+        "value": "ms-local",
+        "label": "Low milliseconds (~1-10 ms)",
+        "difficulty": 3,
+        "expressions": [
+          "Round trip within the same data center",
+          "Disk seek on a spinning HDD",
+          "Read 1 MB sequentially from SSD",
+          "Read 1 MB sequentially over a 1 Gbps network"
+        ]
+      },
+      {
+        "value": "ms-crossregion",
+        "label": "Tens to hundreds of ms (cross-region)",
+        "difficulty": 4,
+        "expressions": [
+          "Round trip from California to the Netherlands",
+          "Round trip from California to Australia",
+          "Round trip across a congested mobile network",
+          "A TLS handshake across continents"
+        ]
+      }
+    ]
+  },
+  {
+    "day": 7,
+    "format": "tf",
+    "statements": [
+      {
+        "statement": "Quicksort's worst-case time complexity is O(n log n).",
+        "answer": false,
+        "explanation": "Quicksort's worst case (e.g., already-sorted input with a naive pivot choice) is O(n²). Its average case is O(n log n)."
+      },
+      {
+        "statement": "A hash table can achieve O(1) average-case insertion, but O(n) worst case if many keys collide.",
+        "answer": true,
+        "explanation": "Heavy collisions can degrade a bucket into a long chain (or a tree, in some implementations), pushing lookups/inserts toward linear time."
+      },
+      {
+        "statement": "Dynamic programming trades additional memory for reduced time by avoiding recomputation of overlapping subproblems.",
+        "answer": true,
+        "explanation": "Memoization or tabulation stores previously computed results so the same subproblem isn't solved from scratch repeatedly."
+      },
+      {
+        "statement": "Breadth-first search on a graph explores nodes in order of decreasing distance from the source.",
+        "answer": false,
+        "explanation": "BFS explores in order of increasing distance — it visits everything at distance 1, then distance 2, and so on, level by level."
+      },
+      {
+        "statement": "A balanced binary search tree guarantees O(log n) search, insert, and delete.",
+        "answer": true,
+        "explanation": "Balancing keeps the tree's height at O(log n), and each operation only needs to walk down one root-to-leaf path."
+      },
+      {
+        "statement": "Big-O notation describes the exact runtime of an algorithm on a specific input.",
+        "answer": false,
+        "explanation": "Big-O describes the asymptotic growth rate of runtime (or space) as input size grows, not an exact measurement for a particular input."
+      },
+      {
+        "statement": "Merge sort requires O(1) additional space when implemented on arrays in the standard way.",
+        "answer": false,
+        "explanation": "The standard array-based merge step needs an auxiliary array to merge into, which is O(n) extra space."
+      },
+      {
+        "statement": "A greedy algorithm always produces the globally optimal solution for any optimization problem.",
+        "answer": false,
+        "explanation": "Greedy only guarantees optimality for problems with the right structure (e.g., matroids, or classic cases like activity selection). It fails on problems like 0/1 knapsack."
+      },
+      {
+        "statement": "A dynamic array's (e.g., ArrayList/Vector) append is O(1) amortized, even though individual appends can occasionally be O(n).",
+        "answer": true,
+        "explanation": "Occasional resizes cost O(n), but they happen rarely enough (doubling capacity each time) that the average cost per append is O(1)."
+      },
+      {
+        "statement": "Two Sum can only be solved in O(n²) time; no faster approach exists.",
+        "answer": false,
+        "explanation": "Two Sum has a well-known O(n) solution using a hash map to check for each element's complement while scanning once."
+      }
+    ]
+  },
+  {
+    "day": 8,
+    "format": "clues",
+    "term": "Idempotency key",
+    "clues": [
+      "A client includes this with a request so retries don't cause duplicate side effects",
+      "The server stores it and returns the original result if it sees the same one again",
+      "Commonly used in payment APIs so a retried charge doesn't bill twice",
+      "It's an explicit, client-generated request-level token — not the same as an HTTP method simply being idempotent by definition"
+    ],
+    "options": ["Idempotency key", "Nonce", "Session token", "ETag"],
+    "correctIndex": 0,
+    "explanation": "An idempotency key is a unique token the client attaches to a request; if the server has already processed that key, it returns the cached result instead of re-executing the operation. A nonce is a related but distinct security concept (mainly for preventing replay attacks); an ETag is for cache validation, not retry-safety."
+  },
+  {
+    "day": 9,
+    "format": "estimate",
+    "prompt": "Roughly how many terabytes of storage would you need to keep 2 years of logs for a service handling 10,000 requests/sec, if each logged request is about 1 KB?",
+    "trueValue": 631,
+    "unit": "TB total",
+    "explanation": "10,000 req/s × 86,400 s/day ≈ 864M requests/day. × 1 KB ≈ 864 GB/day. × ~730 days (2 years) ≈ 631 TB. The trick: fully compute the per-day figure before scaling by days — rounding too early compounds error across a multi-step Fermi chain."
+  },
+  {
+    "day": 10,
+    "format": "mc",
+    "questions": [
+      {
+        "question": "What's the main benefit of programming to an interface rather than a concrete implementation?",
+        "options": ["Faster runtime performance", "Lets you swap implementations without changing dependent code", "Reduces memory usage", "Removes the need for testing"],
+        "correctIndex": 1,
+        "explanation": "Code that depends on an interface doesn't care which concrete class it's handed, so implementations can be swapped (or mocked in tests) freely."
+      },
+      {
+        "question": "In object-oriented design, what does the Liskov Substitution Principle require?",
+        "options": ["Subclasses must add new public methods", "Subclasses must be substitutable for their base class without breaking correctness", "Every class must have exactly one subclass", "Classes must not use inheritance"],
+        "correctIndex": 1,
+        "explanation": "Any code written against the base type should keep working correctly if handed a subclass instance instead — the subclass shouldn't violate the base class's contract."
+      },
+      {
+        "question": "A function takes O(1) extra space and modifies its input array in place. What's the space complexity of its extra usage?",
+        "options": ["O(n)", "O(1)", "O(log n)", "O(n²)"],
+        "correctIndex": 1,
+        "explanation": "In-place with only a constant number of extra variables (regardless of input size) is O(1) auxiliary space complexity."
+      },
+      {
+        "question": "Which principle says a class should have only one reason to change?",
+        "options": ["Open/Closed Principle", "Single Responsibility Principle", "Dependency Inversion Principle", "Interface Segregation Principle"],
+        "correctIndex": 1,
+        "explanation": "The Single Responsibility Principle: a class should be responsible for one piece of functionality, so changes to unrelated requirements don't force changes to it."
+      },
+      {
+        "question": "What's the primary purpose of a mutex in concurrent programming?",
+        "options": ["Speed up I/O operations", "Ensure only one thread accesses a critical section at a time", "Cache function results", "Schedule threads for execution"],
+        "correctIndex": 1,
+        "explanation": "A mutex (mutual exclusion lock) prevents multiple threads from concurrently executing code that reads/writes shared state, avoiding race conditions."
+      }
+    ]
+  },
+  {
+    "day": 11,
+    "format": "connections",
+    "groups": [
+      {
+        "value": "thundering-herd",
+        "label": "Thundering herd",
+        "difficulty": 1,
+        "expressions": [
+          "A popular cache key expires and thousands of requests hit the DB at once to repopulate it",
+          "A cron job on thousands of servers all fires at midnight, spiking load",
+          "A service recovers from an outage and every client's retry queue fires at once",
+          "A flash sale starts and every waiting client refreshes at the same second"
+        ]
+      },
+      {
+        "value": "hot-partition",
+        "label": "Hot partition / hot key",
+        "difficulty": 2,
+        "expressions": [
+          "Sharding by a monotonically increasing user ID sends all new signups to the newest shard",
+          "One celebrity account gets 100x the read traffic of every other row in its partition",
+          "Sharding by date means today's shard absorbs all of today's writes while old shards idle",
+          "A single key storing a global counter bottlenecks under high write concurrency"
+        ]
+      },
+      {
+        "value": "n-plus-one",
+        "label": "N+1 query problem",
+        "difficulty": 3,
+        "expressions": [
+          "Fetching 100 blog posts, then issuing a separate query for each post's author",
+          "Loading a user's order history, then querying each order's line items in a loop",
+          "An ORM lazily loads a related object inside a loop instead of eager-loading it",
+          "Rendering 50 products, each triggering its own DB round trip for inventory count"
+        ]
+      },
+      {
+        "value": "cascading-failure",
+        "label": "Cascading failure",
+        "difficulty": 4,
+        "expressions": [
+          "A slow payment service causes request threads to pile up until the API times out",
+          "One overloaded microservice causes callers to retry aggressively, overloading it further",
+          "A connection pool gets exhausted because one slow query holds connections open",
+          "A failing dependency with no circuit breaker takes down every service that calls it"
+        ]
+      }
+    ]
+  },
+  {
+    "day": 12,
+    "format": "tf",
+    "statements": [
+      {
+        "statement": "A CDN primarily reduces latency by caching content geographically closer to users.",
+        "answer": true,
+        "explanation": "By serving from an edge node near the user instead of a distant origin server, round-trip time drops significantly."
+      },
+      {
+        "statement": "Synchronous multi-region database replication typically increases write latency compared to a single-region setup.",
+        "answer": true,
+        "explanation": "The write has to wait for acknowledgment from remote replicas before it's considered committed, and cross-region round trips are slow."
+      },
+      {
+        "statement": "Eventual consistency guarantees that all replicas will always return the same value at any given instant.",
+        "answer": false,
+        "explanation": "Eventual consistency only guarantees replicas will converge to the same value eventually, given no new writes — not that they agree at every instant."
+      },
+      {
+        "statement": "A read replica can serve stale data if replication lag exists between it and the primary.",
+        "answer": true,
+        "explanation": "The replica applies changes asynchronously, so during the lag window it may not yet reflect the primary's latest writes."
+      },
+      {
+        "statement": "Horizontal scaling means adding more CPU/RAM to a single existing server.",
+        "answer": false,
+        "explanation": "That's vertical scaling. Horizontal scaling means adding more machines/instances to share the load."
+      },
+      {
+        "statement": "A cache-aside (lazy-loading) pattern means the app checks the cache first, and on a miss, loads from the DB and populates the cache.",
+        "answer": true,
+        "explanation": "This is the classic cache-aside flow: check cache → miss → read DB → write result into cache → return it."
+      },
+      {
+        "statement": "Leader election is unnecessary in distributed systems that use single-leader replication.",
+        "answer": false,
+        "explanation": "Leader election is exactly how those systems recover when the current leader fails — a new leader must be chosen."
+      },
+      {
+        "statement": "A write-behind (write-back) cache can lose recently written data if the cache crashes before flushing to the database.",
+        "answer": true,
+        "explanation": "Because the DB write is deferred and async, data that only exists in the cache at crash time can be lost."
+      },
+      {
+        "statement": "CDNs are only useful for static assets like images and never for dynamic API responses.",
+        "answer": false,
+        "explanation": "Modern CDNs increasingly cache or accelerate some dynamic content too, via short-TTL caching or edge compute — not just static files."
+      },
+      {
+        "statement": "Database connection pooling exists to avoid the overhead of establishing a new connection for every query.",
+        "answer": true,
+        "explanation": "Opening a fresh TCP + auth connection per query is expensive; a pool reuses a set of already-open connections instead."
+      }
+    ]
+  },
+  {
+    "day": 13,
+    "format": "clues",
+    "term": "Rate limiter",
+    "clues": [
+      "Protects a service from being overwhelmed by too many requests in a short window",
+      "Common algorithms include token bucket and sliding window",
+      "Often implemented at the API gateway, in front of the actual business logic",
+      "Returns an HTTP 429 status code when a client exceeds its quota"
+    ],
+    "options": ["Rate limiter", "Circuit breaker", "Load balancer", "Bulkhead"],
+    "correctIndex": 0,
+    "explanation": "A rate limiter caps how many requests a client can make in a given window — token bucket, leaky bucket, and sliding window are the classic algorithms, and HTTP 429 is the standard response when exceeded. A circuit breaker is a related but different pattern: it stops calling a failing downstream dependency, rather than limiting inbound request rate."
+  },
+  {
+    "day": 14,
+    "format": "estimate",
+    "prompt": "Your API serves 50,000 requests/minute at peak, each request payload averaging 2 KB, and your on-call engineer has 3 monitors on her desk. Roughly how many GB/hour of request payload data does the API receive at peak?",
+    "trueValue": 6,
+    "unit": "GB/hour",
+    "explanation": "The '3 monitors' is a red herring — irrelevant to the math, like a misdirection in a cryptic clue. The real chain: 50,000 req/min × 60 = 3,000,000 req/hr; × 2 KB ≈ 6,000,000 KB ≈ 6 GB/hr. Spotting which numbers in a prompt actually matter is itself a core Fermi-estimation skill."
+  }
+]
