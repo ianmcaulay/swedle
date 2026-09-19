@@ -1,7 +1,7 @@
 import { getStreak } from '../../utils/storage';
 import ConnectionsSolvedGroup from './ConnectionsSolvedGroup';
 import Confetti from '../Confetti';
-import CatReward from '../CatReward';
+import Reward from '../Reward';
 
 function getMessage(mistakes, won) {
   if (!won) return 'Better luck next time! Study the groups below.';
@@ -39,7 +39,7 @@ export default function ConnectionsResults({ groups, solvedGroups, mistakes, won
         ))}
       </div>
 
-      <CatReward />
+      <Reward />
 
       <div className="flex justify-center gap-8 mb-8">
         <div className="text-center">

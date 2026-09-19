@@ -1,6 +1,6 @@
 import { getStreak } from '../../utils/storage';
 import Confetti from '../Confetti';
-import CatReward from '../CatReward';
+import Reward from '../Reward';
 
 function getMessage(score, total, timedOut) {
   if (timedOut) return "Time's up! Keep practicing to get faster.";
@@ -31,7 +31,7 @@ export default function TFResults({ answers, statements, score, total, timeRemai
         )}
       </div>
 
-      <CatReward />
+      <Reward />
 
       <div className="flex justify-center gap-8 mb-8">
         <div className="text-center">

@@ -1,6 +1,6 @@
 import { getStreak } from '../../utils/storage';
 import Confetti from '../Confetti';
-import CatReward from '../CatReward';
+import Reward from '../Reward';
 
 function getMessage(won, attempts) {
   if (won && attempts === 1) return 'First guess — great calibration!';
@@ -25,7 +25,7 @@ export default function EstimateResults({ prompt, trueValue, unit, explanation, 
         </p>
       </div>
 
-      <CatReward />
+      <Reward />
 
       <div className="flex justify-center gap-8 mb-8">
         <div className="text-center">

@@ -1,6 +1,6 @@
 import { getStreak } from '../../utils/storage';
 import Confetti from '../Confetti';
-import CatReward from '../CatReward';
+import Reward from '../Reward';
 
 function getMessage(cluesUsed, totalClues) {
   if (cluesUsed === 1) return 'Nailed it on the first clue!';
@@ -27,7 +27,7 @@ export default function CluesResults({ term, explanation, cluesUsed, totalClues 
         <p className="text-brand-200/50 text-sm mt-1">{getMessage(cluesUsed, totalClues)}</p>
       </div>
 
-      <CatReward />
+      <Reward />
 
       <div className="flex justify-center gap-8 mb-8">
         <div className="text-center">

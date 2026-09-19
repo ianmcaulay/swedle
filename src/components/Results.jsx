@@ -1,6 +1,6 @@
 import { getStreak } from '../utils/storage';
 import Confetti from './Confetti';
-import CatReward from './CatReward';
+import Reward from './Reward';
 
 function getMessage(score, total) {
   const pct = score / total;
@@ -25,7 +25,7 @@ export default function Results({ answers, questions, score, total }) {
         <p className="text-brand-200/70 text-lg">{getMessage(score, total)}</p>
       </div>
 
-      <CatReward />
+      <Reward />
 
       <div className="flex justify-center gap-8 mb-8">
         <div className="text-center">
