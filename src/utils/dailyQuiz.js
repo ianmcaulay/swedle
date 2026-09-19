@@ -4,8 +4,8 @@ import week001 from '../data/days/week-001.json';
 const ALL_DAYS = [...week001].sort((a, b) => a.day - b.day);
 const TOTAL_DAYS = ALL_DAYS.length;
 
-// Epoch: September 14, 2026 — day 0 (swedle's launch day)
-const EPOCH = new Date(2026, 8, 14);
+// Epoch: September 19, 2026 — day 0 (swedle's launch day)
+const EPOCH = new Date(2026, 8, 19);
 
 const FORMAT_LABELS = {
   mc: 'Multiple Choice',
