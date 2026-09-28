@@ -1,7 +1,8 @@
 import week001 from '../data/days/week-001.json';
+import week002 from '../data/days/week-002.json';
 
 // All curated days, sorted by day number
-const ALL_DAYS = [...week001].sort((a, b) => a.day - b.day);
+const ALL_DAYS = [...week001, ...week002].sort((a, b) => a.day - b.day);
 const TOTAL_DAYS = ALL_DAYS.length;
 
 // Epoch: September 19, 2026 — day 0 (swedle's launch day)

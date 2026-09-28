@@ -1,0 +1,546 @@
+[
+  {
+    "day": 15,
+    "format": "connections",
+    "groups": [
+      {
+        "value": "pessimistic-row-lock",
+        "label": "Pessimistic row-level locking",
+        "difficulty": 1,
+        "expressions": [
+          "Acquires a lock on a specific row before reading or writing it, blocking other transactions from touching that row",
+          "Other transactions requesting the same row must wait until the lock is released",
+          "Reduces wasted work under high contention compared to optimistic retries, at the cost of blocking",
+          "Common statement-level mechanism: SELECT ... FOR UPDATE"
+        ]
+      },
+      {
+        "value": "optimistic",
+        "label": "Optimistic concurrency control",
+        "difficulty": 2,
+        "expressions": [
+          "Assumes conflicts are rare, so transactions proceed without acquiring locks up front",
+          "Checks a version number or timestamp at commit time to detect a conflicting concurrent write",
+          "If a conflict is detected at commit time, the transaction is rejected and typically retried",
+          "Performs best under low contention; wastes work under high contention when retries pile up"
+        ]
+      },
+      {
+        "value": "mvcc",
+        "label": "Multi-version concurrency control (MVCC)",
+        "difficulty": 3,
+        "expressions": [
+          "Readers see a consistent snapshot of data without blocking concurrent writers",
+          "Each write creates a new version of a row rather than overwriting it in place",
+          "Used by Postgres and MySQL's InnoDB to let long-running reads avoid read locks entirely",
+          "Old row versions need to be garbage-collected (e.g. Postgres's VACUUM) once no transaction can see them anymore"
+        ]
+      },
+      {
+        "value": "2pl",
+        "label": "Two-phase locking (2PL)",
+        "difficulty": 4,
+        "expressions": [
+          "A transaction acquires all the locks it needs before it releases any of them",
+          "Split into a growing phase (acquiring locks) and a shrinking phase (releasing them)",
+          "Guarantees serializability but can produce deadlocks that need to be detected and resolved",
+          "A transaction that needs a new lock after entering its shrinking phase must abort or restart"
+        ]
+      }
+    ]
+  },
+  {
+    "day": 16,
+    "format": "mc",
+    "questions": [
+      {
+        "question": "Using the Master Theorem, a recurrence T(n) = 2T(n/2) + O(n) resolves to which time complexity?",
+        "options": ["O(n)", "O(n log n)", "O(n²)", "O(log n)"],
+        "correctIndex": 1,
+        "explanation": "With a=2, b=2, f(n)=n, we get n^(log_b a) = n^1 = n, which matches f(n) — this is the Master Theorem's 'balanced' case, giving O(n log n). It's exactly merge sort's recurrence."
+      },
+      {
+        "question": "A hash table doubles its capacity and rehashes every element whenever it exceeds a load-factor threshold. What's the amortized time complexity of a single insert, averaged over a long sequence of inserts?",
+        "options": ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
+        "correctIndex": 0,
+        "explanation": "Just like a doubling dynamic array, expensive O(n) resizes happen rarely enough (geometrically less often as the table grows) that the average cost per insert works out to O(1)."
+      },
+      {
+        "question": "Why does quicksort with a naive 'always pick the first element as pivot' strategy hit O(n²) on already-sorted (or reverse-sorted) input?",
+        "options": ["It happens on any random input roughly half the time", "Every partition splits into a size-0 side and a size-(n-1) side, the most unbalanced split possible", "It only happens when the array contains duplicate values", "Comparisons become more expensive than swaps on sorted data"],
+        "correctIndex": 1,
+        "explanation": "On sorted input, the first element is always the smallest (or largest) remaining, so every partition is maximally unbalanced — giving n partitions that each do O(n) work, for O(n²) total."
+      },
+      {
+        "question": "Roughly how many distinct values can a 64-bit signed integer represent?",
+        "options": ["2³²", "2⁶³", "2⁶⁴", "2⁶⁴ − 1"],
+        "correctIndex": 2,
+        "explanation": "64 bits give 2⁶⁴ possible bit patterns, period — signed representation just splits that same count of values into negative and non-negative ranges (roughly −2⁶³ to 2⁶³−1). Signedness changes the range, not the count."
+      },
+      {
+        "question": "For sufficiently large n, which ordering below correctly ranks these complexities from fastest-growing to slowest-growing?",
+        "options": ["O(2ⁿ) > O(n²) > O(n log n) > O(log n)", "O(n²) > O(2ⁿ) > O(log n) > O(n log n)", "O(2ⁿ) > O(n log n) > O(n²) > O(log n)", "O(log n) > O(n log n) > O(n²) > O(2ⁿ)"],
+        "correctIndex": 0,
+        "explanation": "Exponential growth eventually dominates any polynomial, which dominates linearithmic, which dominates logarithmic — regardless of the constants involved, this ordering always wins out for large enough n."
+      }
+    ]
+  },
+  {
+    "day": 17,
+    "format": "tf",
+    "statements": [
+      {
+        "statement": "A binary search tree that's completely unbalanced (effectively a linked list) degrades search to O(n) instead of O(log n).",
+        "answer": true,
+        "explanation": "Without balancing, a BST can end up as a single chain of nodes, so a search may have to walk every node — no better than a linked list."
+      },
+      {
+        "statement": "The Raft consensus algorithm requires a strict majority (quorum) of nodes to agree before a write is considered committed.",
+        "answer": true,
+        "explanation": "Raft's leader replicates a log entry and only commits it once a majority of nodes have acknowledged it, which is what lets the system tolerate minority-side failures."
+      },
+      {
+        "statement": "Serializable is the weakest of the standard SQL isolation levels.",
+        "answer": false,
+        "explanation": "Serializable is the strongest standard isolation level — it prevents all the classic anomalies. Read uncommitted is the weakest."
+      },
+      {
+        "statement": "A vector clock can determine whether two events are causally related or concurrent, unlike a single scalar timestamp.",
+        "answer": true,
+        "explanation": "By tracking a counter per node, a vector clock can tell 'A happened before B,' 'B happened before A,' or 'neither — they're concurrent,' which a single wall-clock timestamp can't distinguish reliably."
+      },
+      {
+        "statement": "PATCH requests are, by HTTP specification, guaranteed to be idempotent the same way PUT requests are.",
+        "answer": false,
+        "explanation": "PUT is defined as idempotent (it replaces a full resource). PATCH applies a partial update and its idempotency depends on how it's implemented — it isn't guaranteed by the spec."
+      },
+      {
+        "statement": "Adding more virtual nodes per physical node in a consistent-hashing ring generally improves load distribution evenness across nodes.",
+        "answer": true,
+        "explanation": "More virtual nodes per physical node smooths out the ring, reducing the variance in how much of the key space each physical node ends up owning."
+      },
+      {
+        "statement": "UDP guarantees in-order delivery of packets, while TCP does not.",
+        "answer": false,
+        "explanation": "It's the reverse: TCP guarantees ordered, reliable delivery (retransmitting lost packets); UDP guarantees neither ordering nor delivery."
+      },
+      {
+        "statement": "In a min-heap, the maximum element can always be found in O(1) time.",
+        "answer": false,
+        "explanation": "A min-heap only guarantees O(1) access to the minimum. The maximum could be at any leaf, so finding it requires scanning, which is O(n) in general."
+      },
+      {
+        "statement": "A B+ tree differs from a B-tree mainly in that all values are stored in the leaf nodes, with internal nodes holding only keys for routing.",
+        "answer": true,
+        "explanation": "That's the key structural difference — B+ tree leaves are also typically linked together, which makes range scans fast, since internal nodes exist purely to route lookups."
+      },
+      {
+        "statement": "Read-committed isolation prevents dirty reads but does not prevent non-repeatable reads.",
+        "answer": true,
+        "explanation": "A transaction under read-committed never sees another transaction's uncommitted data, but re-reading the same row twice can still return different values if another transaction commits a change in between."
+      }
+    ]
+  },
+  {
+    "day": 18,
+    "format": "estimate",
+    "prompt": "A social app pushes a notification to every eligible user when a live video starts. It has 200 million monthly active users, about 15% of whom open the app on a typical day, and of those, 40% have push notifications enabled. If sending one push notification costs the notification service about $0.000004, roughly how many dollars does a single 'video went live' push blast cost?",
+    "trueValue": 48,
+    "unit": "$ per blast",
+    "explanation": "200M MAU × 15% ≈ 30M daily active users. × 40% enabled ≈ 12M notifiable users. × $0.000004/notification ≈ $48. The habit that matters: chain the percentages down to a final headcount before multiplying by a per-unit cost — don't apply the cost to the original 200M."
+  },
+  {
+    "day": 19,
+    "format": "connections",
+    "groups": [
+      {
+        "value": "n2",
+        "label": "O(n²) — quadratic time",
+        "difficulty": 1,
+        "expressions": [
+          "Bubble sort, selection sort, and insertion sort in the worst case",
+          "Checking every pair in an array for a condition with a nested loop",
+          "Naive edit distance or longest-common-subsequence DP over two length-n sequences",
+          "Computing all pairwise distances between n points"
+        ]
+      },
+      {
+        "value": "n3",
+        "label": "O(n³) — cubic time",
+        "difficulty": 2,
+        "expressions": [
+          "The straightforward triple-nested-loop multiplication of two n×n matrices",
+          "Floyd-Warshall all-pairs shortest paths on a graph with n vertices",
+          "A DP solution with three nested indices, each ranging over n",
+          "Checking every triple of elements in an array for a condition"
+        ]
+      },
+      {
+        "value": "2^n",
+        "label": "O(2ⁿ) — exponential time",
+        "difficulty": 3,
+        "expressions": [
+          "A naive recursive Fibonacci implementation with no memoization",
+          "Generating every subset of a set of n elements",
+          "A brute-force solution that tries every inclusion/exclusion of n items (e.g. naive 0/1 knapsack)",
+          "Solving 3-SAT by trying every possible truth assignment"
+        ]
+      },
+      {
+        "value": "n!",
+        "label": "O(n!) — factorial time",
+        "difficulty": 4,
+        "expressions": [
+          "Generating every permutation of n elements",
+          "A brute-force traveling salesman solution that checks every possible route",
+          "Solving n-queens by trying every ordering of queens across columns, with no pruning",
+          "Enumerating every possible seating arrangement of n distinct guests"
+        ]
+      }
+    ]
+  },
+  {
+    "day": 20,
+    "format": "mc",
+    "questions": [
+      {
+        "question": "Which sorting algorithm is both stable (equal elements keep their relative order) and O(n log n) in the worst case?",
+        "options": ["Quicksort", "Heapsort", "Merge sort", "Selection sort"],
+        "correctIndex": 2,
+        "explanation": "Merge sort is stable and guarantees O(n log n) even in the worst case. Typical in-place quicksort and heapsort aren't stable, and selection sort is O(n²)."
+      },
+      {
+        "question": "You're sharding a key-value store across 8 nodes using hash(key) % 8. If you add a 9th node and switch to hash(key) % 9, roughly what fraction of keys need to move?",
+        "options": ["About 1/9", "About 1/8", "Almost all of them", "None — only new keys are affected"],
+        "correctIndex": 2,
+        "explanation": "Changing the modulus changes hash(key) % n for nearly every key, since the remainder depends on the divisor. This is exactly the problem consistent hashing exists to avoid."
+      },
+      {
+        "question": "A service handles 1,200 requests/second at steady state, and each request takes 40ms of single-threaded processing. Ignoring queueing overhead, how many worker threads are needed to keep up?",
+        "options": ["12", "30", "48", "1,200"],
+        "correctIndex": 2,
+        "explanation": "One thread can finish 1000ms / 40ms = 25 requests/second. To sustain 1,200 req/s you need 1,200 / 25 = 48 threads working in parallel."
+      },
+      {
+        "question": "Why are B-tree indexes typically 'wide' (a high branching factor) rather than binary?",
+        "options": ["To minimize tree height and therefore disk reads per lookup", "Because B-trees are required to have at most 2 children per node", "To guarantee the same height as a balanced BST for the same n", "To avoid storing any data on disk"],
+        "correctIndex": 0,
+        "explanation": "A high fan-out keeps the tree very shallow — often just 3-4 levels even over millions of rows — which matters because each level typically costs a disk read/seek."
+      },
+      {
+        "question": "Why does exponential backoff commonly add 'jitter' (randomness) to the retry delay?",
+        "options": ["It makes the average retry delay shorter overall", "It prevents many clients from retrying in lockstep, which would just recreate the overload", "It's mathematically required for the delay to grow exponentially", "It reduces how many retries a client is allowed to make"],
+        "correctIndex": 1,
+        "explanation": "Without jitter, clients that all failed at the same moment would also all retry at the same moment, recreating the exact spike that caused the failure. Jitter spreads those retries out."
+      }
+    ]
+  },
+  {
+    "day": 21,
+    "format": "estimate",
+    "prompt": "A video-streaming service has 2 million concurrent viewers at peak, each streaming at an average bitrate of 4 Mbps. Roughly how many Gbps of total egress bandwidth does that require at peak?",
+    "trueValue": 8000,
+    "unit": "Gbps",
+    "explanation": "2,000,000 viewers × 4 Mbps ≈ 8,000,000 Mbps of total bandwidth. 8,000,000 Mbps ÷ 1,000 Mbps/Gbps = 8,000 Gbps. The scale here is the real lesson: at this size you're reasoning in thousands of Gbps, not a single data center's worth of network capacity."
+  },
+  {
+    "day": 22,
+    "format": "tf",
+    "statements": [
+      {
+        "statement": "In Raft, a leader can safely commit a write after receiving acknowledgment from a majority of nodes, without waiting for all nodes to acknowledge.",
+        "answer": true,
+        "explanation": "Majority acknowledgment is enough because any two majorities must overlap by at least one node, which is what lets the system stay correct even if a minority of nodes are down or slow."
+      },
+      {
+        "statement": "Establishing a TLS connection requires additional round trips on top of the underlying TCP handshake, making secure connection setup slower than plain TCP alone.",
+        "answer": true,
+        "explanation": "TLS negotiates the encryption handshake after TCP connects — at least one extra round trip (TLS 1.3) or more (TLS 1.2), before encrypted application data can flow."
+      },
+      {
+        "statement": "Round-robin load balancing distributes requests evenly by count, without regard for how long each request takes to process.",
+        "answer": true,
+        "explanation": "Round robin just cycles through servers in order — it has no concept of current load, so a server stuck on a few slow requests still gets the same share of new traffic as an idle one."
+      },
+      {
+        "statement": "Consistent hashing without virtual nodes tends to distribute keys evenly across physical nodes, even with only a few nodes in the ring.",
+        "answer": false,
+        "explanation": "With few physical points on the ring, the arcs between them can vary a lot in size, so distribution can be quite uneven. Virtual nodes exist specifically to smooth this out."
+      },
+      {
+        "statement": "Increasing the number of hash functions in a Bloom filter always reduces its false-positive rate, no matter how many you add.",
+        "answer": false,
+        "explanation": "There's an optimal number of hash functions for a given bit-array size and element count; past that point, adding more hash functions sets more bits per insert and actually raises the false-positive rate."
+      },
+      {
+        "statement": "In an LRU cache implemented with a hash map plus a doubly linked list, both get and put operations run in O(1) time.",
+        "answer": true,
+        "explanation": "The hash map gives O(1) node lookup, and the doubly linked list lets you move that node to the front (most-recently-used end) or evict the back node in O(1)."
+      },
+      {
+        "statement": "A skip list requires periodic full rebalancing operations to maintain O(log n) expected search time, similar to a balanced BST.",
+        "answer": false,
+        "explanation": "Skip lists rely on randomized level assignment for each inserted element, not rebalancing, to achieve expected O(log n) search time — there's no rebalancing step at all."
+      },
+      {
+        "statement": "Sharding a database always eliminates the need for cross-shard transactions.",
+        "answer": false,
+        "explanation": "Sharding often introduces cross-shard transactions and queries (whenever related data lands on different shards) rather than eliminating the need for them."
+      },
+      {
+        "statement": "A CDN reduces origin server load in addition to reducing client-perceived latency.",
+        "answer": true,
+        "explanation": "Requests served from a cached edge copy never reach the origin server at all, so a high cache-hit rate directly cuts the load the origin has to handle."
+      },
+      {
+        "statement": "The birthday paradox implies that hash collisions become likely with far fewer items than the total number of possible hash values would naively suggest.",
+        "answer": true,
+        "explanation": "Collision probability grows with the number of pairs of items, not the number of items itself, so it climbs much faster than intuition suggests — a classic reason hash spaces need to be much larger than the expected item count."
+      }
+    ]
+  },
+  {
+    "day": 23,
+    "format": "connections",
+    "groups": [
+      {
+        "value": "read-uncommitted",
+        "label": "Read uncommitted",
+        "difficulty": 1,
+        "expressions": [
+          "Allows dirty reads — a transaction can see another transaction's uncommitted changes",
+          "The weakest standard SQL isolation level",
+          "Permits dirty reads, non-repeatable reads, and phantom reads",
+          "Rarely used in practice because it offers almost no isolation guarantees"
+        ]
+      },
+      {
+        "value": "read-committed",
+        "label": "Read committed",
+        "difficulty": 2,
+        "expressions": [
+          "Prevents dirty reads, but still allows non-repeatable reads",
+          "A transaction only ever sees data that has already been committed by other transactions",
+          "The default isolation level in PostgreSQL and Oracle",
+          "Re-reading the same row twice in one transaction can return different values if another transaction commits in between"
+        ]
+      },
+      {
+        "value": "repeatable-read",
+        "label": "Repeatable read",
+        "difficulty": 3,
+        "expressions": [
+          "Guarantees that if a transaction reads a row twice, it sees the same value both times",
+          "Still permits phantom reads in the standard SQL definition (rows matching a WHERE clause can appear or vanish)",
+          "The default isolation level in MySQL's InnoDB",
+          "Stronger than read committed, but not full serializability"
+        ]
+      },
+      {
+        "value": "serializable",
+        "label": "Serializable",
+        "difficulty": 4,
+        "expressions": [
+          "The strongest standard SQL isolation level — prevents dirty reads, non-repeatable reads, and phantom reads",
+          "Guarantees transactions behave as if they ran one at a time in some sequential order",
+          "Often implemented with heavier locking or conflict detection, at a cost to concurrency/throughput",
+          "The isolation level most likely to cause transactions to abort and retry under contention"
+        ]
+      }
+    ]
+  },
+  {
+    "day": 24,
+    "format": "mc",
+    "questions": [
+      {
+        "question": "You want 99.99% ('four nines') availability over a 30-day month. Roughly how many minutes of downtime does that allow?",
+        "options": ["~4.3 minutes", "~43 minutes", "~7.2 hours", "~72 minutes"],
+        "correctIndex": 0,
+        "explanation": "30 days × 24 × 60 ≈ 43,200 minutes/month. 99.99% availability allows 0.01% downtime: 43,200 × 0.0001 ≈ 4.3 minutes."
+      },
+      {
+        "question": "Which consistency model guarantees that once a write completes, every subsequent read from any client will see that write or a later one?",
+        "options": ["Eventual consistency", "Read-your-writes consistency", "Strong (linearizable) consistency", "Causal consistency"],
+        "correctIndex": 2,
+        "explanation": "Strong/linearizable consistency gives that global, real-time guarantee for every client. Read-your-writes only guarantees it for the writer's own later reads, not for everyone else's."
+      },
+      {
+        "question": "A Bloom filter is sized to give a 1% false-positive rate at its intended capacity. What happens if you insert twice as many elements as it was sized for, without resizing?",
+        "options": ["It stays about the same, around 1%", "It roughly doubles, to about 2%", "It rises well beyond 2% as the bit array saturates", "It drops to 0%, since excess elements can't be represented"],
+        "correctIndex": 2,
+        "explanation": "As more bits get set, collisions between different elements' bit patterns compound, so the false-positive rate grows much faster than linearly — a Bloom filter needs to be resized or rebuilt if it outgrows its sizing, not just tolerated."
+      },
+      {
+        "question": "In the CAP theorem, a system that chooses Availability over Consistency during a network partition is typically called what?",
+        "options": ["CP system", "AP system", "CA system", "ACID system"],
+        "correctIndex": 1,
+        "explanation": "AP means choosing Availability and Partition tolerance, sacrificing Consistency during the partition. A true CA system isn't realistic across a real network partition, which is why CAP forces a choice between CP and AP when one occurs."
+      },
+      {
+        "question": "What's the best reason a real-time video call might use UDP instead of TCP?",
+        "options": ["UDP guarantees packet delivery, which calls need", "UDP avoids TCP's retransmission and ordering delays, favoring low latency over guaranteed delivery", "UDP encrypts data by default and TCP does not", "UDP supports larger packets than TCP"],
+        "correctIndex": 1,
+        "explanation": "A momentarily dropped video frame is often less disruptive than the added latency from TCP retransmitting and holding up all later packets until a lost one arrives — real-time media usually prefers 'mostly fast' over 'perfectly complete.'"
+      }
+    ]
+  },
+  {
+    "day": 25,
+    "format": "tf",
+    "statements": [
+      {
+        "statement": "Dijkstra's algorithm does not correctly handle graphs with negative edge weights.",
+        "answer": true,
+        "explanation": "Dijkstra's greedy assumption — that once a node is finalized its shortest distance can't improve — breaks down if a later negative edge could still shorten a path to it."
+      },
+      {
+        "statement": "Little's Law relates the average number of items in a system to the arrival rate and the average time each item spends in the system (L = λW).",
+        "answer": true,
+        "explanation": "This holds for any stable queueing system, which is exactly why it shows up so often in capacity-planning estimates."
+      },
+      {
+        "statement": "Bellman-Ford can correctly find shortest paths even when a graph contains a negative-weight cycle reachable from the source.",
+        "answer": false,
+        "explanation": "Bellman-Ford can detect a negative cycle, but it can't produce a valid shortest path when one exists reachable from the source — you could keep looping the cycle to make the 'shortest path' arbitrarily more negative."
+      },
+      {
+        "statement": "In a quorum-based system (like a Dynamo-style database), reads can get strong consistency if R + W > N, where R and W are the read/write quorum sizes and N is the number of replicas.",
+        "answer": true,
+        "explanation": "If read and write quorums are guaranteed to overlap by at least one replica, every read is guaranteed to see the most recent committed write."
+      },
+      {
+        "statement": "A write-ahead log (WAL) is optional in most databases and exists purely as an audit trail for administrators.",
+        "answer": false,
+        "explanation": "The WAL is central to crash recovery and durability — a write is logged before it's applied, so a crash mid-write can be replayed from the log instead of losing or corrupting data."
+      },
+      {
+        "statement": "CPU cache locality means that accessing array elements sequentially is typically much faster than accessing them in random order, due to how cache lines are loaded.",
+        "answer": true,
+        "explanation": "Each cache-line fetch pulls in a contiguous chunk of memory; sequential access reuses that chunk for the next several elements, while random access triggers a fresh, slow fetch almost every time."
+      },
+      {
+        "statement": "Gossip protocols require a central coordinator node to propagate state updates across all nodes.",
+        "answer": false,
+        "explanation": "Gossip protocols are defined by being decentralized — nodes periodically exchange state with a few random peers, and updates spread epidemically without any central coordinator."
+      },
+      {
+        "statement": "A service mesh's sidecar proxy pattern lets you add retries, timeouts, and observability to service-to-service calls without changing application code.",
+        "answer": true,
+        "explanation": "The sidecar intercepts network traffic to and from the service, so cross-cutting concerns like retries and metrics can be handled at the proxy layer instead of inside each service's code."
+      },
+      {
+        "statement": "Amdahl's Law says the maximum speedup from parallelizing part of a task is limited by the fraction of the task that must remain sequential.",
+        "answer": true,
+        "explanation": "Even with infinite parallel resources, the unparallelizable portion sets a hard ceiling on total speedup — a small sequential fraction can dominate the runtime at large scale."
+      },
+      {
+        "statement": "Distributed tracing (e.g., spans and trace IDs) is primarily used to measure total storage consumption across microservices.",
+        "answer": false,
+        "explanation": "Distributed tracing follows a single request's path and timing across services to diagnose latency and failures — it's not a storage-measurement tool."
+      }
+    ]
+  },
+  {
+    "day": 26,
+    "format": "estimate",
+    "prompt": "Your API has a steady arrival rate of 5,000 requests/second, and each request takes an average of 150ms to fully process. Using Little's Law (L = λW), roughly how many requests are 'in flight' being processed at any given moment?",
+    "trueValue": 750,
+    "unit": "requests in flight",
+    "explanation": "L = λW: λ = 5,000 requests/second, W = 0.15 seconds. 5,000 × 0.15 = 750. This is the same formula that tells you how many worker threads/connections a system needs to hold concurrently — arrival rate × time-in-system."
+  },
+  {
+    "day": 27,
+    "format": "connections",
+    "groups": [
+      {
+        "value": "btree-index",
+        "label": "B-tree index",
+        "difficulty": 1,
+        "expressions": [
+          "Efficient for equality lookups and range queries (e.g. WHERE age BETWEEN 20 AND 30)",
+          "The default index type in most relational databases",
+          "Keeps keys sorted, so an ORDER BY on the indexed column can avoid a separate sort",
+          "Height stays low (a handful of levels) even over millions of rows, thanks to a high branching factor"
+        ]
+      },
+      {
+        "value": "hash-index",
+        "label": "Hash index",
+        "difficulty": 2,
+        "expressions": [
+          "Extremely fast for exact-match equality lookups (WHERE id = 5), O(1) average case",
+          "Cannot efficiently support range queries or ORDER BY, since values aren't stored in sorted order",
+          "Used internally by many hash-based key-value stores as their primary lookup structure",
+          "Two different keys hashing to the same bucket still need a way to resolve the collision"
+        ]
+      },
+      {
+        "value": "bitmap-index",
+        "label": "Bitmap index",
+        "difficulty": 3,
+        "expressions": [
+          "Stores one bit vector per distinct value, marking which rows have that value",
+          "Works best on low-cardinality columns, like a 'status' or 'gender' column with few distinct values",
+          "Combining conditions on multiple bitmap-indexed columns can be done with fast bitwise AND/OR operations",
+          "Becomes inefficient and space-heavy on high-cardinality columns (e.g. a unique user ID)"
+        ]
+      },
+      {
+        "value": "inverted-index",
+        "label": "Inverted index",
+        "difficulty": 4,
+        "expressions": [
+          "Maps each distinct word (or token) to the list of documents that contain it",
+          "The core data structure behind full-text search engines like Elasticsearch and Lucene",
+          "Makes 'find all documents containing this word' fast, unlike scanning every document's text",
+          "Often paired with term frequency / relevance scoring to rank matching documents"
+        ]
+      }
+    ]
+  },
+  {
+    "day": 28,
+    "format": "mc",
+    "questions": [
+      {
+        "question": "A request fans out to 100 backend calls in parallel and only returns once every call has responded. Why does the overall response time end up looking much closer to the backends' tail latency (like p95 or p99) than to their median?",
+        "options": ["Network switches automatically prioritize fan-out traffic", "The overall response can't finish faster than its single slowest call, and across 100 independent calls the odds that at least one is slow add up fast", "Fan-out calls are always executed sequentially rather than in parallel", "TCP retransmission inflates every response by the same fixed amount"],
+        "correctIndex": 1,
+        "explanation": "With 100 independent calls, even a small per-call chance of hitting a slow percentile compounds — the odds that none of the 100 are slow drop quickly. This is why wide fan-out services obsess over tail latency (p99+), not just averages."
+      },
+      {
+        "question": "A transaction needs to update rows across 3 different database shards atomically. What's the standard technique for achieving atomicity across independent shards?",
+        "options": ["Two-phase commit (2PC)", "Read-committed isolation", "Consistent hashing", "Connection pooling"],
+        "correctIndex": 0,
+        "explanation": "Two-phase commit coordinates a prepare-then-commit protocol across independent participants so they all commit or all abort together. The other options don't address cross-shard atomicity at all."
+      },
+      {
+        "question": "Which scenario describes a classic cache-aside race condition?",
+        "options": ["A write-through cache updates the DB and cache in the same operation", "A reader misses the cache and reads a stale value from the DB just as a writer updates the DB and invalidates the cache — then the reader's stale read gets written back into the cache", "A TTL-based cache entry expires normally after its timeout", "A write-behind cache batches several writes into one DB operation"],
+        "correctIndex": 1,
+        "explanation": "The reader's DB read (of the old value) and the writer's invalidation can interleave so that the reader's write-back into the cache happens after the invalidation, leaving the cache stuck on stale data."
+      },
+      {
+        "question": "In optimistic concurrency control using version numbers, what happens when a write's expected version doesn't match the currently stored version?",
+        "options": ["The write silently succeeds and overwrites the newer data", "The write is rejected, since a conflicting update happened after the writer's read", "The database automatically merges both changes", "The row is permanently locked against further writes"],
+        "correctIndex": 1,
+        "explanation": "A version mismatch means someone else committed a change since this writer last read the row, so the write is rejected — the client is expected to re-read and retry."
+      },
+      {
+        "question": "For systems that allow concurrent writes to the same key from multiple replicas, which statement about conflict resolution is accurate?",
+        "options": ["Conflicts can't happen because replicas never accept writes concurrently", "'Last write wins' (by timestamp) is one common, but lossy, way to resolve conflicting concurrent writes", "Conflicts are always resolved by rejecting all concurrent writes outright", "Systems with eventual consistency never allow writes to the same key from more than one node"],
+        "correctIndex": 1,
+        "explanation": "Last-write-wins is simple to implement but silently discards one of the concurrent writes — other approaches (vector clocks, CRDTs, application-level merge) try to preserve more information instead of just picking a winner."
+      }
+    ]
+  },
+  {
+    "day": 29,
+    "format": "estimate",
+    "prompt": "A chat app has 50 million daily active users, each sending 25 messages/day on average. Traffic follows a typical day/night pattern where peak-hour throughput runs at about 5x the daily average rate. Roughly how many messages/second does the system need to handle at peak?",
+    "trueValue": 72000,
+    "unit": "messages/sec at peak",
+    "explanation": "50M users × 25 messages ≈ 1.25B messages/day. 1.25B ÷ 86,400 s/day ≈ 14,470 messages/sec average. Peak ≈ 5× average ≈ 72,000 messages/sec. Compute the average rate first (total ÷ seconds/day), then apply the peak multiplier — don't try to eyeball peak directly from the daily total."
+  }
+]

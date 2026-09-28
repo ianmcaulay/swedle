@@ -143,17 +143,53 @@
   },
   {
     "day": 3,
-    "format": "clues",
-    "term": "Consistent hashing",
-    "clues": [
-      "Used to distribute load across a changing number of nodes",
-      "Minimizes data movement when nodes are added or removed",
-      "Commonly visualized as a ring",
-      "Used by systems like DynamoDB, Cassandra, and many CDN load balancers"
-    ],
-    "options": ["Consistent hashing", "Round-robin balancing", "Rendezvous hashing", "Range-based sharding"],
-    "correctIndex": 0,
-    "explanation": "Consistent hashing maps both nodes and keys onto a hash ring. When a node joins or leaves, only the keys between it and its neighbor need to move, instead of reshuffling everything the way plain modulo hashing would. Rendezvous hashing is a real, related alternative that solves the same problem differently (each key picks the node that scores highest for it, no ring required)."
+    "format": "connections",
+    "groups": [
+      {
+        "value": "write-through",
+        "label": "Write-through cache",
+        "difficulty": 1,
+        "expressions": [
+          "Writes go to the cache and the database synchronously, in the same operation",
+          "A write isn't considered complete until both the cache and DB have the new value",
+          "Slower writes in exchange for the cache never holding stale data right after a write",
+          "Both the cache write and the database write need to succeed for the operation to count as done"
+        ]
+      },
+      {
+        "value": "write-behind",
+        "label": "Write-behind (write-back) cache",
+        "difficulty": 2,
+        "expressions": [
+          "Writes go to the cache immediately and the database update happens asynchronously later",
+          "Fastest write path, but risks losing recently written data if the cache crashes before flushing",
+          "Often batches multiple writes into fewer database operations",
+          "Trades durability risk for lower write latency"
+        ]
+      },
+      {
+        "value": "cache-aside",
+        "label": "Cache-aside (lazy-loading)",
+        "difficulty": 3,
+        "expressions": [
+          "The application checks the cache first, and on a miss, loads from the DB and populates the cache",
+          "The cache only ever holds keys that have actually been requested",
+          "A common pattern with tools like Redis or Memcached sitting beside a database",
+          "The application code is responsible for keeping the cache populated, not the cache itself"
+        ]
+      },
+      {
+        "value": "read-through",
+        "label": "Read-through cache",
+        "difficulty": 4,
+        "expressions": [
+          "The cache itself sits in front of the database and loads missing data on a miss, transparently",
+          "The application only ever talks to the cache, never directly to the database",
+          "Cache-population logic lives inside the caching layer instead of the application",
+          "Often paired with write-through for a fully cache-fronted read/write path"
+        ]
+      }
+    ]
   },
   {
     "day": 4,
@@ -307,17 +343,39 @@
   },
   {
     "day": 8,
-    "format": "clues",
-    "term": "Idempotency key",
-    "clues": [
-      "A client includes this with a request so retries don't cause duplicate side effects",
-      "The server stores it and returns the original result if it sees the same one again",
-      "Commonly used in payment APIs so a retried charge doesn't bill twice",
-      "It's an explicit, client-generated request-level token — not the same as an HTTP method simply being idempotent by definition"
-    ],
-    "options": ["Idempotency key", "Nonce", "Session token", "ETag"],
-    "correctIndex": 0,
-    "explanation": "An idempotency key is a unique token the client attaches to a request; if the server has already processed that key, it returns the cached result instead of re-executing the operation. A nonce is a related but distinct security concept (mainly for preventing replay attacks); an ETag is for cache validation, not retry-safety."
+    "format": "mc",
+    "questions": [
+      {
+        "question": "Which of these HTTP methods is NOT idempotent by definition — repeating it multiple times can have a different cumulative effect than doing it once?",
+        "options": ["GET", "PUT", "DELETE", "POST"],
+        "correctIndex": 3,
+        "explanation": "GET, PUT, and DELETE are defined as idempotent — repeating them leaves the server in the same state as doing it once. POST typically creates a new resource each time it's called, so repeating it isn't safe by default."
+      },
+      {
+        "question": "Which rate-limiting algorithm allows short bursts of traffic up to a set capacity, then refills gradually over time?",
+        "options": ["Fixed window counter", "Token bucket", "Leaky bucket", "Sliding log"],
+        "correctIndex": 1,
+        "explanation": "A token bucket fills with tokens at a steady rate and lets a request through as long as tokens are available, so requests can burst up to the bucket's capacity. A leaky bucket instead smooths output to a constant rate, with no bursting."
+      },
+      {
+        "question": "The four Coffman conditions are necessary for deadlock to occur. Which of these is NOT one of them?",
+        "options": ["Mutual exclusion", "Hold and wait", "Preemption", "Circular wait"],
+        "correctIndex": 2,
+        "explanation": "The actual condition is 'no preemption' — a resource can't be forcibly taken from a process holding it. 'Preemption' by itself is the opposite of that condition, not one of the four (mutual exclusion, hold and wait, no preemption, circular wait)."
+      },
+      {
+        "question": "In a typical point-to-point message queue (like SQS), once a message is consumed and acknowledged by one worker, what happens to it for other workers?",
+        "options": ["It's broadcast to all workers", "It's removed from the queue and not delivered to others", "It's duplicated for every subscriber", "It's stored permanently for replay"],
+        "correctIndex": 1,
+        "explanation": "Point-to-point queues use competing consumers: each message goes to exactly one worker. Broadcasting the same message to every subscriber describes a pub/sub topic instead."
+      },
+      {
+        "question": "Which load-balancing algorithm routes each new request to the server currently handling the fewest active requests?",
+        "options": ["Round robin", "Least connections", "Random", "IP hash"],
+        "correctIndex": 1,
+        "explanation": "Least connections directly accounts for current load on each server. Round robin and random ignore load entirely, and IP hash routes by client (for session affinity), not by server load."
+      }
+    ]
   },
   {
     "day": 9,
@@ -471,17 +529,59 @@
   },
   {
     "day": 13,
-    "format": "clues",
-    "term": "Rate limiter",
-    "clues": [
-      "Protects a service from being overwhelmed by too many requests in a short window",
-      "Common algorithms include token bucket and sliding window",
-      "Often implemented at the API gateway, in front of the actual business logic",
-      "Returns an HTTP 429 status code when a client exceeds its quota"
-    ],
-    "options": ["Rate limiter", "Circuit breaker", "Load balancer", "Bulkhead"],
-    "correctIndex": 0,
-    "explanation": "A rate limiter caps how many requests a client can make in a given window — token bucket, leaky bucket, and sliding window are the classic algorithms, and HTTP 429 is the standard response when exceeded. A circuit breaker is a related but different pattern: it stops calling a failing downstream dependency, rather than limiting inbound request rate."
+    "format": "tf",
+    "statements": [
+      {
+        "statement": "A TCP handshake requires three steps (SYN, SYN-ACK, ACK) before data can be sent.",
+        "answer": true,
+        "explanation": "This is the standard TCP three-way handshake, establishing that both sides can send and receive before any application data flows."
+      },
+      {
+        "statement": "A GET request should not, by definition, cause side effects that modify state on the server.",
+        "answer": true,
+        "explanation": "HTTP semantics classify GET as a 'safe' method — it's meant only to retrieve a representation of a resource, never to change server state."
+      },
+      {
+        "statement": "In a monolithic architecture, deploying a change to one small feature typically requires redeploying the entire application.",
+        "answer": true,
+        "explanation": "A monolith packages all functionality into a single deployable unit, so even a small code change means rebuilding and redeploying the whole thing."
+      },
+      {
+        "statement": "Blue-green deployment reduces downtime by running two identical production environments and switching traffic between them.",
+        "answer": true,
+        "explanation": "Traffic is cut over to the new ('green') environment once it's verified healthy, and the old ('blue') one stays on standby for a fast rollback."
+      },
+      {
+        "statement": "Exponential backoff means a client waits a fixed, constant amount of time between every retry.",
+        "answer": false,
+        "explanation": "Exponential backoff increases the wait time between retries (typically doubling, often with jitter added) rather than retrying at a fixed interval."
+      },
+      {
+        "statement": "Two-phase commit is designed so a distributed transaction either commits across all participants or aborts across all of them.",
+        "answer": true,
+        "explanation": "The coordinator's prepare phase confirms every participant can commit before a commit phase tells them all to do so — the goal is all-or-nothing atomicity across nodes."
+      },
+      {
+        "statement": "Garbage collection eliminates the possibility of memory leaks in a language that uses it.",
+        "answer": false,
+        "explanation": "GC only reclaims memory that's unreachable. Code that keeps an unintended reference alive (e.g., a growing cache or forgotten listener) can still leak memory indefinitely."
+      },
+      {
+        "statement": "A foreign key constraint enforces that a value in one table must exist as a primary key (or unique key) in another table.",
+        "answer": true,
+        "explanation": "That's the referential-integrity guarantee a foreign key provides — it blocks inserts/updates that would reference a row that doesn't exist."
+      },
+      {
+        "statement": "Database denormalization typically improves read performance at the cost of data duplication and more complex writes.",
+        "answer": true,
+        "explanation": "Duplicating data avoids expensive joins on reads, but now every write that touches that data has to update it in multiple places to stay consistent."
+      },
+      {
+        "statement": "gRPC uses HTTP/1.1 and JSON payloads by default, the same as a typical REST API.",
+        "answer": false,
+        "explanation": "gRPC is built on HTTP/2 and serializes messages with Protocol Buffers by default — both are different from the HTTP/1.1 + JSON combination typical of REST."
+      }
+    ]
   },
   {
     "day": 14,
