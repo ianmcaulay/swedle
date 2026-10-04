@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 .playwright-mcp
 .claude
+
+# Local-only project guide for Claude Code (contains personal context)
+CLAUDE.md
