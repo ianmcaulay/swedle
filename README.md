@@ -4,8 +4,6 @@ A daily puzzle game for software engineers, in the spirit of Wordle, Connections
 
 **Play it at https://swedle-beta.vercel.app/**
 
-I play a handful of daily puzzles every morning and wanted one about the stuff I actually work with, so I built it.
-
 ## Formats
 
 The format rotates daily:
