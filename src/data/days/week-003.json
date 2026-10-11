@@ -1,0 +1,566 @@
+[
+  {
+    "day": 30,
+    "format": "connections",
+    "groups": [
+      {
+        "value": "dijkstra",
+        "label": "Dijkstra's algorithm",
+        "difficulty": 1,
+        "expressions": [
+          "Repeatedly expands the unvisited node with the smallest tentative distance, using a min-priority queue",
+          "Single-source shortest paths, but only correct when every edge weight is non-negative",
+          "O((V + E) log V) with a binary heap",
+          "Once a node is popped from the queue, its distance is final and never revised"
+        ]
+      },
+      {
+        "value": "topological-sort",
+        "label": "Topological sort",
+        "difficulty": 2,
+        "expressions": [
+          "Only defined for directed acyclic graphs",
+          "Kahn's algorithm repeatedly removes nodes whose in-degree has dropped to zero",
+          "The natural fit for ordering build steps or course prerequisites",
+          "If the algorithm finishes without outputting every node, the graph contains a cycle"
+        ]
+      },
+      {
+        "value": "union-find",
+        "label": "Union-Find (disjoint set union)",
+        "difficulty": 3,
+        "expressions": [
+          "Answers 'are these two elements in the same group?' as groups keep merging",
+          "With path compression and union by rank, operations run in near-constant amortized time (inverse Ackermann)",
+          "Each group is represented by a root; a lookup follows parent pointers up to it",
+          "Detects a cycle when adding an edge to an undirected graph joins two nodes that already share a root"
+        ]
+      },
+      {
+        "value": "floyd-warshall",
+        "label": "Floyd-Warshall",
+        "difficulty": 4,
+        "expressions": [
+          "Computes shortest paths between every pair of nodes in O(V³)",
+          "A triple nested loop where the outermost loop picks an intermediate vertex k",
+          "Works with negative edge weights, as long as there's no negative cycle",
+          "A negative value appearing on the diagonal, dist[i][i] < 0, reveals a negative cycle"
+        ]
+      }
+    ]
+  },
+  {
+    "day": 31,
+    "format": "tf",
+    "statements": [
+      {
+        "statement": "Building a binary heap from an unsorted array of n elements (bottom-up heapify) takes O(n) time, not O(n log n).",
+        "answer": true,
+        "explanation": "Most nodes sit near the bottom of the heap and only sift down a short distance. Summing the work level by level gives a series that converges to O(n), even though n separate inserts would cost O(n log n)."
+      },
+      {
+        "statement": "Assuming constant-time child lookup at each node, looking up a key of length L in a trie takes O(L) time no matter how many keys are stored.",
+        "answer": true,
+        "explanation": "A trie lookup walks one node per character of the key, so its cost depends on the key's length, not on how many other keys share the structure."
+      },
+      {
+        "statement": "Radix sort is a comparison-based sort, so it can't beat O(n log n).",
+        "answer": false,
+        "explanation": "Radix sort never compares two keys directly. It distributes keys into buckets digit by digit, running in O(d·(n + b)) for d digits in base b, which is how it sidesteps the comparison-sort lower bound."
+      },
+      {
+        "statement": "Any comparison-based sorting algorithm needs Ω(n log n) comparisons in the worst case.",
+        "answer": true,
+        "explanation": "There are n! possible orderings, and each comparison at best halves the remaining possibilities, so a decision tree needs depth log₂(n!) = Θ(n log n) to tell them all apart."
+      },
+      {
+        "statement": "Depth-first search finds the fewest-edges path between two nodes in an unweighted graph just as reliably as breadth-first search.",
+        "answer": false,
+        "explanation": "DFS follows one branch as deep as it goes and may reach the target by a long detour first. BFS explores nodes in order of distance, so the first time it reaches a node is via a shortest path."
+      },
+      {
+        "statement": "Heap sort is a stable sort.",
+        "answer": false,
+        "explanation": "Heap sort swaps elements across long distances in the array, so equal keys can end up reordered. Merge sort is the usual choice when you need both O(n log n) and stability."
+      },
+      {
+        "statement": "Insertion sort runs in O(n) time on input that's already sorted.",
+        "answer": true,
+        "explanation": "Each new element is compared once with its predecessor, found to already be in place, and left there. That's one comparison per element, making insertion sort a good choice for nearly-sorted data."
+      },
+      {
+        "statement": "Floyd's tortoise-and-hare algorithm detects a cycle in a linked list using O(1) extra space.",
+        "answer": true,
+        "explanation": "It only needs two pointers, one moving one step and one moving two steps at a time. If there's a cycle, the fast pointer eventually laps the slow one. No visited-set is required."
+      },
+      {
+        "statement": "A red-black tree with n nodes has height at most about 2·log₂(n + 1).",
+        "answer": true,
+        "explanation": "Every root-to-leaf path has the same number of black nodes, and red nodes can't be adjacent, so the longest path is at most twice the shortest. That bounds the height at 2·log₂(n + 1)."
+      },
+      {
+        "statement": "Top-down memoized recursion always uses less memory than the equivalent bottom-up tabulation.",
+        "answer": false,
+        "explanation": "It's often the opposite: memoization adds call-stack depth on top of its cache, while bottom-up tabulation can frequently be trimmed to keep only the last row or two of the table."
+      }
+    ]
+  },
+  {
+    "day": 32,
+    "format": "mc",
+    "questions": [
+      {
+        "question": "What's the average-case time complexity of Quickselect for finding the k-th smallest element in an unsorted array of n elements?",
+        "options": ["O(n)", "O(n log n)", "O(k log n)", "O(n²)"],
+        "correctIndex": 0,
+        "explanation": "Like quicksort, Quickselect partitions around a pivot, but it only recurses into the side containing the k-th element. On average that's n + n/2 + n/4 + … ≈ 2n work, so O(n). The worst case is still O(n²) with consistently bad pivots."
+      },
+      {
+        "question": "You need to report the median of a stream of numbers after every new arrival. Which approach gives O(log n) per insert and O(1) median lookups?",
+        "options": ["Keep a sorted array and binary-search each insert position", "Keep a max-heap of the lower half and a min-heap of the upper half", "Keep a hash map from value to count", "Keep a single min-heap of every value"],
+        "correctIndex": 1,
+        "explanation": "The two heaps are kept balanced in size (differing by at most one), so the median is always at one or both heap tops. A sorted array also gives O(1) median, but each insert shifts elements, costing O(n)."
+      },
+      {
+        "question": "What's the optimal time complexity for computing the maximum of every window of size k as it slides across an array of n elements?",
+        "options": ["O(n·k)", "O(n log k)", "O(n)", "O(k log n)"],
+        "correctIndex": 2,
+        "explanation": "A monotonic deque holds indices whose values are in decreasing order. Each element is pushed and popped at most once, so the whole pass is O(n). A heap gets you O(n log k), which is good but not optimal."
+      },
+      {
+        "question": "What's the time complexity of the standard dynamic-programming solution for the longest common subsequence of two strings of lengths m and n?",
+        "options": ["O(m + n)", "O(m·n)", "O(2^(m+n))", "O((m + n) log(m + n))"],
+        "correctIndex": 1,
+        "explanation": "The DP table has (m+1)×(n+1) cells, and each is filled in O(1) from its neighbors, giving O(m·n) time. Space can be cut to O(min(m, n)) if you only need the length, not the subsequence itself."
+      },
+      {
+        "question": "Which of these problems has no known polynomial-time algorithm in general (it's NP-hard)?",
+        "options": ["Minimum spanning tree", "Shortest paths in a weighted DAG", "Traveling salesman: the shortest tour visiting every city once", "Maximum matching in a bipartite graph"],
+        "correctIndex": 2,
+        "explanation": "MST (Kruskal/Prim), DAG shortest paths (topological order + relaxation), and bipartite matching (Hopcroft-Karp) all have polynomial algorithms. TSP is NP-hard; practical solvers rely on heuristics, approximations, or exponential exact algorithms."
+      }
+    ]
+  },
+  {
+    "day": 33,
+    "format": "estimate",
+    "prompt": "A platform has 500 million user profiles, each about 2 KB when serialized. You want to keep the most active 20% of profiles in an in-memory cache, and every cache node has one replica for failover. Roughly how many GB of cache memory do you need in total, replicas included?",
+    "trueValue": 400,
+    "unit": "GB of cache memory",
+    "explanation": "20% of 500M = 100M hot profiles. 100M × 2 KB = 200M KB = 200 GB of primary data. One replica per node doubles it: 200 GB × 2 = 400 GB. In practice you'd add headroom for per-key overhead and fragmentation, but sizing the working set first and then applying replication is the core of the estimate."
+  },
+  {
+    "day": 34,
+    "format": "connections",
+    "groups": [
+      {
+        "value": "read-your-writes",
+        "label": "Read-your-writes consistency",
+        "difficulty": 1,
+        "expressions": [
+          "After you update your profile photo, you always see the new one, even if others briefly see the old one",
+          "A guarantee scoped to a single client's own writes, not to everyone's",
+          "Often implemented by routing a user's reads to the leader for a short window after they write",
+          "Violated when a user posts a comment, refreshes, and their own comment is missing"
+        ]
+      },
+      {
+        "value": "monotonic-reads",
+        "label": "Monotonic reads",
+        "difficulty": 2,
+        "expressions": [
+          "Once a client has seen a value, later reads never return an older one",
+          "Violated when successive reads hit replicas with different amounts of replication lag",
+          "Commonly achieved by pinning each user's reads to the same replica",
+          "Violated when someone else's comment appears on one refresh, then vanishes on the next"
+        ]
+      },
+      {
+        "value": "causal",
+        "label": "Causal consistency",
+        "difficulty": 3,
+        "expressions": [
+          "If a reply is visible, the message it's replying to must be visible too",
+          "Preserves happens-before ordering but lets concurrent writes appear in different orders on different nodes",
+          "Often tracked with vector clocks or explicit dependency metadata",
+          "Among the strongest models that can stay available during a network partition"
+        ]
+      },
+      {
+        "value": "linearizability",
+        "label": "Linearizability",
+        "difficulty": 4,
+        "expressions": [
+          "Every operation appears to take effect atomically at a single instant between its start and its response",
+          "Once any client has read a new value, no client can afterwards read the old one",
+          "What a lock or lease service needs in order to make leader election safe",
+          "Can't keep every node available during a network partition: the 'C' in CAP"
+        ]
+      }
+    ]
+  },
+  {
+    "day": 35,
+    "format": "tf",
+    "statements": [
+      {
+        "statement": "Kafka guarantees message ordering only within a single partition, not across all partitions of a topic.",
+        "answer": true,
+        "explanation": "Each partition is an ordered, append-only log, but partitions are independent of each other. If you need per-entity ordering, you key messages so every event for that entity lands in the same partition."
+      },
+      {
+        "statement": "In two-phase commit, participants that have voted 'yes' can be left blocked indefinitely if the coordinator crashes before announcing the outcome.",
+        "answer": true,
+        "explanation": "After voting yes, a participant has promised to commit if told to and can't decide on its own, since others may have voted no. Until the coordinator recovers, it holds its locks. This is 2PC's best-known weakness."
+      },
+      {
+        "statement": "A Dynamo-style store with N=3 replicas, W=1, and R=1 guarantees every read sees the most recent successful write.",
+        "answer": false,
+        "explanation": "Quorum overlap requires R + W > N. With R + W = 2 ≤ 3, a read can hit a replica the write never reached. Something like W=2, R=2 would guarantee overlap."
+      },
+      {
+        "statement": "Snapshot isolation prevents every anomaly that serializable isolation prevents.",
+        "answer": false,
+        "explanation": "Snapshot isolation still allows write skew: two transactions read overlapping data, each makes a decision based on what it saw, and they write to different rows. Each commit is valid alone, but together they break an invariant."
+      },
+      {
+        "statement": "As long as every machine runs NTP, wall-clock timestamps from different machines are safe for ordering events across them.",
+        "answer": false,
+        "explanation": "NTP keeps clocks close, not identical. Skew of milliseconds or more is normal, and clocks can even jump backwards. Last-write-wins on wall-clock time can silently drop writes, which is why logical clocks exist."
+      },
+      {
+        "statement": "With single-leader asynchronous replication, failing over to a follower can lose writes the old leader had already acknowledged to clients.",
+        "answer": true,
+        "explanation": "The leader acknowledges a write before followers have it. If the leader dies before those writes replicate, the newly promoted follower simply never saw them."
+      },
+      {
+        "statement": "A 5-node Raft cluster can keep making progress with 2 nodes down.",
+        "answer": true,
+        "explanation": "Raft needs a majority, 3 of 5, to elect a leader and commit entries. With 2 down, the remaining 3 still form a majority."
+      },
+      {
+        "statement": "Growing a Raft cluster from 5 nodes to 6 increases the number of node failures it can tolerate.",
+        "answer": false,
+        "explanation": "A 6-node cluster needs 4 for a majority, so it still tolerates only 2 failures, the same as 5 nodes, while adding another replica to every write. That's why clusters usually use odd sizes."
+      },
+      {
+        "statement": "Stream processors usually achieve 'exactly-once' results by combining at-least-once delivery with idempotent or transactional writes.",
+        "answer": true,
+        "explanation": "True exactly-once delivery over an unreliable network isn't achievable, so systems retry (at-least-once) and make the effect of a duplicate harmless, through idempotent writes or by committing output and input offsets atomically."
+      },
+      {
+        "statement": "Fencing tokens prevent a client that paused (e.g. for a long GC) after its lock lease expired from corrupting data when it wakes up and writes.",
+        "answer": true,
+        "explanation": "Each lock grant comes with a monotonically increasing token, and storage rejects writes carrying a token older than one it has already seen. The stale client's write is refused even though the client still thinks it holds the lock."
+      }
+    ]
+  },
+  {
+    "day": 36,
+    "format": "estimate",
+    "prompt": "A service peaks at 300,000 requests/second. Each request needs 20 ms of CPU time on a single core, each server has 16 cores, and you want servers running at no more than 50% CPU at peak to leave headroom. Roughly how many servers do you need?",
+    "trueValue": 750,
+    "unit": "servers",
+    "explanation": "One core handles 1 s ÷ 20 ms = 50 requests/sec. A 16-core server at 100% CPU handles 16 × 50 = 800 requests/sec; at the 50% target that's 400 requests/sec. 300,000 ÷ 400 = 750 servers. Work out per-core throughput first, then scale to the server, then apply the utilization target. Skipping the headroom step is the classic way to come in 2x too low."
+  },
+  {
+    "day": 37,
+    "format": "mc",
+    "questions": [
+      {
+        "question": "A URL shortener uses 7-character codes drawn from [a-zA-Z0-9] (62 symbols). Roughly how many distinct codes is that?",
+        "options": ["About 3.5 million", "About 3.5 billion", "About 3.5 trillion", "About 3.5 quadrillion"],
+        "correctIndex": 2,
+        "explanation": "62⁷ ≈ 3.52 × 10¹². A quick way there: 62² ≈ 3,844, 62³ ≈ 238K, and each extra character multiplies by 62. Even at a billion new links a day, that space would last thousands of days."
+      },
+      {
+        "question": "A news feed precomputes timelines by pushing each new post into every follower's feed ('fan-out on write'). What's the main problem with this for accounts that have tens of millions of followers?",
+        "options": ["Their posts can't be cached", "A single post triggers tens of millions of feed writes, causing huge write spikes and delivery lag", "Followers see their posts out of order", "Reads become slower for everyone else"],
+        "correctIndex": 1,
+        "explanation": "Fan-out on write makes reads cheap but makes write cost proportional to follower count. A common fix is a hybrid: fan out for ordinary accounts, and merge posts from very large accounts into the feed at read time."
+      },
+      {
+        "question": "What's the main purpose of a dead-letter queue?",
+        "options": ["To store messages that were delivered successfully, for auditing", "To hold messages that repeatedly fail processing, so they stop being retried forever and blocking other work", "To buffer messages while consumers are scaling up", "To deliver messages in strict priority order"],
+        "correctIndex": 1,
+        "explanation": "A 'poison' message that always crashes its consumer would otherwise be retried in a loop. After N failed attempts it's moved aside to the dead-letter queue, where it can be inspected and replayed once the bug is fixed."
+      },
+      {
+        "question": "An API runs on 20 servers behind a load balancer, and each server enforces '100 requests/minute per user' with its own in-memory counter. What's the problem?",
+        "options": ["In-memory counters are too slow for rate limiting", "Requests spread across servers, so a user can actually make up to about 2,000 requests/minute", "Users get blocked after about 5 requests/minute", "There's no problem as long as the load balancer uses round-robin"],
+        "correctIndex": 1,
+        "explanation": "Each server only sees its own share of a user's traffic. A global limit needs shared state (e.g. counters in a central store like Redis), or sticky routing of each user to one server, which brings its own trade-offs."
+      },
+      {
+        "question": "Why are geohashes useful for 'find places near me' queries?",
+        "options": ["They give exact distances between any two points", "Nearby points usually share a common prefix, so proximity becomes a prefix/range lookup on an ordinary index", "They compress coordinates to fewer bits than latitude/longitude with no loss", "Two points with different prefixes are always far apart"],
+        "correctIndex": 1,
+        "explanation": "Geohash interleaves latitude and longitude bits, so a shared prefix means a shared cell. The catch: two points right next to each other across a cell boundary can have very different prefixes, so real queries also check the neighboring cells."
+      }
+    ]
+  },
+  {
+    "day": 38,
+    "format": "connections",
+    "groups": [
+      {
+        "value": "deadlock",
+        "label": "Deadlock",
+        "difficulty": 1,
+        "expressions": [
+          "Two threads each hold one lock and wait forever for the other's",
+          "Prevented by having every thread acquire locks in the same global order",
+          "With ordinary blocking locks, the stuck threads sleep and use no CPU",
+          "Databases detect it by finding a cycle in the wait-for graph"
+        ]
+      },
+      {
+        "value": "starvation",
+        "label": "Starvation",
+        "difficulty": 2,
+        "expressions": [
+          "One thread is perpetually passed over for a resource while others keep getting it",
+          "Can hit writers under a read-write lock that always lets new readers in first",
+          "Fair (FIFO) queuing or aging priorities over time prevents it",
+          "The system as a whole keeps making progress; just one unlucky thread doesn't"
+        ]
+      },
+      {
+        "value": "livelock",
+        "label": "Livelock",
+        "difficulty": 3,
+        "expressions": [
+          "Threads keep reacting to each other and changing state, but none completes its work",
+          "Like two people in a hallway who keep stepping aside in the same direction",
+          "Unlike its better-known cousin, the stuck threads are busy and burning CPU",
+          "Adding random delays before each retry usually breaks the symmetry"
+        ]
+      },
+      {
+        "value": "priority-inversion",
+        "label": "Priority inversion",
+        "difficulty": 4,
+        "expressions": [
+          "A high-priority task waits on a lock held by a low-priority task, which medium-priority tasks keep preempting",
+          "Famously caused repeated system resets on the Mars Pathfinder lander in 1997",
+          "Fixed by temporarily boosting the lock holder's priority (priority inheritance)",
+          "Only arises under a preemptive, priority-based scheduler"
+        ]
+      }
+    ]
+  },
+  {
+    "day": 39,
+    "format": "tf",
+    "statements": [
+      {
+        "statement": "Switching between two threads of the same process is generally cheaper than switching between two different processes.",
+        "answer": true,
+        "explanation": "Threads share an address space, so the switch skips changing page tables and avoids the TLB flush (or ASID switch) that a process switch involves. It's still not free, but it's lighter."
+      },
+      {
+        "statement": "Reading 1 MB sequentially from RAM is typically faster than a single network round trip within the same datacenter.",
+        "answer": true,
+        "explanation": "A sequential 1 MB read from memory takes on the order of tens of microseconds on modern hardware, while a same-datacenter round trip is typically hundreds of microseconds. Memory bandwidth is enormous compared to network latency."
+      },
+      {
+        "statement": "False sharing happens when threads on different cores write to different variables that sit on the same CPU cache line, forcing that line to bounce between cores.",
+        "answer": true,
+        "explanation": "Cache coherence works per cache line (usually 64 bytes), not per variable. Two logically independent counters on one line can slow each other down dramatically. Padding or aligning them onto separate lines fixes it."
+      },
+      {
+        "statement": "In standard CPython with the GIL enabled, CPU-bound pure-Python code running in multiple threads executes in parallel across cores.",
+        "answer": false,
+        "explanation": "The GIL lets only one thread execute Python bytecode at a time, so CPU-bound threads take turns rather than running in parallel. Threads still help for I/O-bound work; for CPU-bound work, multiprocessing is the usual answer."
+      },
+      {
+        "statement": "Event-loop servers built on epoll or kqueue let a single thread manage many thousands of mostly-idle connections efficiently.",
+        "answer": true,
+        "explanation": "The kernel reports only the sockets that are ready, so one thread can wait on a huge set of connections without a dedicated thread (and stack) per connection. That's the core idea behind servers like nginx."
+      },
+      {
+        "statement": "Increasing a service's worker thread pool size always increases its throughput.",
+        "answer": false,
+        "explanation": "Past the point where CPU, a lock, or a downstream dependency is saturated, more threads add contention and context-switching overhead. Throughput flattens or drops while latency climbs."
+      },
+      {
+        "statement": "Averaging the p99 latencies reported by each server gives the correct p99 latency for the whole fleet.",
+        "answer": false,
+        "explanation": "Percentiles don't average. The fleet-wide p99 depends on the full distribution, so you need to merge the underlying data (e.g. histograms or sketches) and then compute the percentile."
+      },
+      {
+        "statement": "Virtual memory lets a process use an address space larger than the physical RAM installed on the machine.",
+        "answer": true,
+        "explanation": "Each process gets its own virtual address space, mapped to physical pages on demand. Pages that don't fit can be backed by disk (swap or the underlying file), at a heavy performance cost when touched."
+      },
+      {
+        "statement": "A TCP connection is uniquely identified by its source IP, source port, destination IP, and destination port.",
+        "answer": true,
+        "explanation": "That 4-tuple is what the kernel uses to demultiplex segments. It's why a server listening on one port can hold many connections at once: each client contributes a different source IP/port pair."
+      },
+      {
+        "statement": "Memory-mapped files bypass the operating system's page cache entirely.",
+        "answer": false,
+        "explanation": "mmap maps the file's pages in the page cache directly into the process's address space, which is how it avoids an extra copy. It's built on the page cache, not around it. Bypassing the cache is what O_DIRECT does."
+      }
+    ]
+  },
+  {
+    "day": 40,
+    "format": "estimate",
+    "prompt": "A photo-sharing app receives 2 million uploads per day. Each original averages 3 MB, and the app also stores resized thumbnails totaling 200 KB per photo. Its CDN serves 95% of image requests from edge caches. Roughly how many TB of new storage does the app need per year, counting originals plus thumbnails (no replication)?",
+    "trueValue": 2336,
+    "unit": "TB/year",
+    "explanation": "Per photo: 3 MB + 0.2 MB = 3.2 MB. Per day: 2M × 3.2 MB = 6.4M MB = 6.4 TB. Per year: 6.4 TB × 365 ≈ 2,336 TB, about 2.3 PB. The 95% CDN hit rate is a red herring: it affects how much read traffic reaches origin, not how many bytes you have to store."
+  },
+  {
+    "day": 41,
+    "format": "mc",
+    "questions": [
+      {
+        "question": "A table has a composite B-tree index on (last_name, first_name). Which query can NOT use that index to find matching rows efficiently?",
+        "options": ["WHERE last_name = 'Lovelace'", "WHERE last_name = 'Lovelace' AND first_name = 'Ada'", "WHERE first_name = 'Ada'", "WHERE last_name LIKE 'Love%'"],
+        "correctIndex": 2,
+        "explanation": "A composite index is sorted by its first column, then by the second within each first-column value. Searching only by first_name is like looking someone up in a phone book by first name: matches are scattered everywhere. This is the leftmost-prefix rule. (Some engines can do a 'skip scan', but it only helps when the leading column has few distinct values.)"
+      },
+      {
+        "question": "What does a covering index let a query avoid?",
+        "options": ["Sorting its results", "Looking up the full table rows, because every column the query needs is already in the index", "Taking any locks", "Being planned by the query optimizer"],
+        "correctIndex": 1,
+        "explanation": "If the index contains every column the query reads, the database answers from the index alone (an 'index-only scan'), skipping a random-access fetch of the row for each match. That can be a big win for hot queries."
+      },
+      {
+        "question": "Compared to a B-tree storage engine, what does an LSM-tree engine (like RocksDB or Cassandra's) typically trade off?",
+        "options": ["Higher write throughput, at the cost of more read amplification and background compaction work", "Faster point reads, at the cost of slower writes", "Lower disk usage, at the cost of no range queries", "Stronger durability, at the cost of needing a write-ahead log"],
+        "correctIndex": 0,
+        "explanation": "LSM trees turn writes into sequential appends (memtable flushes to sorted files), which is great for write-heavy workloads. A read may have to check several files, though, and compaction keeps rewriting data in the background."
+      },
+      {
+        "question": "Why do random UUIDv4 primary keys tend to hurt insert performance on a clustered B-tree index, compared to auto-incrementing IDs?",
+        "options": ["UUIDs are too long to compare quickly", "Inserts land at random positions across the whole tree, causing page splits and poor cache locality", "UUIDs can collide, forcing retries", "Clustered indexes can't store string keys"],
+        "correctIndex": 1,
+        "explanation": "Sequential IDs always append to the rightmost leaf, which stays hot in memory. Random keys touch pages all over the index, so many more pages must be read in and split. Time-ordered IDs (like UUIDv7) get most of the benefit back."
+      },
+      {
+        "question": "In a replicated database, what is 'split brain'?",
+        "options": ["A query planner choosing two different plans for the same query", "Two nodes both believing they are the leader and accepting writes, so the data diverges", "A table being sharded across two regions", "A replica falling too far behind the leader"],
+        "correctIndex": 1,
+        "explanation": "It typically happens when a network partition makes followers think the leader is dead and promote a new one, while the old leader keeps serving clients. Quorum-based elections and fencing exist to prevent both sides from accepting writes."
+      }
+    ]
+  },
+  {
+    "day": 42,
+    "format": "connections",
+    "groups": [
+      {
+        "value": "dns",
+        "label": "DNS",
+        "difficulty": 1,
+        "expressions": [
+          "Translates a hostname into an IP address",
+          "Answers are cached by resolvers until their TTL expires",
+          "Most queries go over UDP port 53",
+          "A, AAAA, CNAME, and MX are record types"
+        ]
+      },
+      {
+        "value": "tls",
+        "label": "TLS",
+        "difficulty": 2,
+        "expressions": [
+          "The server's certificate chain is validated against trusted certificate authorities",
+          "A handshake negotiates the symmetric session keys used to encrypt the rest of the connection",
+          "SNI tells the server which hostname the client wants, before encryption is fully set up",
+          "Version 1.3 cut the full handshake down to a single round trip"
+        ]
+      },
+      {
+        "value": "tcp",
+        "label": "TCP",
+        "difficulty": 3,
+        "expressions": [
+          "Slow start ramps up the congestion window on a new connection",
+          "Sequence numbers and acknowledgments let the receiver detect and recover lost data",
+          "Delivers a strictly ordered byte stream, so one lost segment stalls everything behind it",
+          "Flow control uses the receiver's advertised window to avoid overwhelming it"
+        ]
+      },
+      {
+        "value": "http2",
+        "label": "HTTP/2",
+        "difficulty": 4,
+        "expressions": [
+          "Multiplexes many concurrent requests as streams over one connection",
+          "Compresses headers with HPACK",
+          "Uses a binary framing layer instead of plain-text messages",
+          "Introduced server push, which major browsers later dropped"
+        ]
+      }
+    ]
+  },
+  {
+    "day": 43,
+    "format": "tf",
+    "statements": [
+      {
+        "statement": "An HTTP 301 redirect signals a permanent move and may be cached by clients, while a 302 signals a temporary one.",
+        "answer": true,
+        "explanation": "Browsers and crawlers may remember a 301 and go straight to the new URL next time. That's great for real migrations, but painful if you send a 301 by mistake, since clients may keep following it."
+      },
+      {
+        "statement": "HTTP 401 means the client is authenticated but isn't allowed to access the resource.",
+        "answer": false,
+        "explanation": "That's 403 Forbidden. Despite its name, 401 Unauthorized means the request lacks valid authentication: the server doesn't know who you are yet."
+      },
+      {
+        "statement": "Cursor-based pagination stays consistent under concurrent inserts better than offset-based pagination does.",
+        "answer": true,
+        "explanation": "With offsets, a row inserted ahead of your position shifts everything, so you see duplicates or skip items between pages. A cursor ('give me items after this key') stays anchored to the last row you actually saw."
+      },
+      {
+        "statement": "A query with a large OFFSET (e.g. OFFSET 1000000) is cheap because the database jumps straight to the requested row.",
+        "answer": false,
+        "explanation": "The database generally has to produce and discard all the skipped rows before returning the page, so deep offsets get progressively slower. Keyset/cursor pagination avoids this by seeking on an index."
+      },
+      {
+        "statement": "Storing passwords as a single fast hash such as SHA-256 (even with a salt) is considered best practice.",
+        "answer": false,
+        "explanation": "Fast hashes let attackers test billions of guesses per second on GPUs. Password storage should use a deliberately slow, tunable function like bcrypt, scrypt, or Argon2, with a per-user salt."
+      },
+      {
+        "statement": "A standard signed JWT's payload is encrypted, so it's safe to put secrets in it.",
+        "answer": false,
+        "explanation": "A typical JWT is signed, not encrypted. The payload is just base64url-encoded, and anyone holding the token can decode and read it. The signature only proves it hasn't been tampered with."
+      },
+      {
+        "statement": "Long polling holds an HTTP request open until the server has new data or a timeout passes, then the client immediately sends a new request.",
+        "answer": true,
+        "explanation": "It approximates server push over plain HTTP. It's simpler to deploy than WebSockets, at the cost of a request per update and an idle open connection per waiting client."
+      },
+      {
+        "statement": "A canary deployment sends a small percentage of real traffic to the new version before rolling it out to everyone.",
+        "answer": true,
+        "explanation": "If error rates or latency on the canary look worse than the baseline, you roll back having affected only a small slice of users, rather than finding out from a full rollout."
+      },
+      {
+        "statement": "Feature flags let you deploy code to production without exposing the new behavior to users.",
+        "answer": true,
+        "explanation": "Separating deploy from release means code can ship dark and be turned on gradually, per user or per percentage, and turned off instantly without a redeploy."
+      },
+      {
+        "statement": "CORS is enforced by the server, which refuses to process cross-origin requests from disallowed origins.",
+        "answer": false,
+        "explanation": "CORS is enforced by the browser. The server just sends headers saying which origins are allowed, and the browser decides whether page scripts may read the response. Non-browser clients like curl ignore CORS entirely, so it's no substitute for server-side authentication or authorization."
+      }
+    ]
+  },
+  {
+    "day": 44,
+    "format": "estimate",
+    "prompt": "You need to copy a 10 TB dataset to another datacenter over a dedicated 1 Gbps link that you can saturate the whole time. Roughly how many hours will the transfer take?",
+    "trueValue": 22,
+    "unit": "hours",
+    "explanation": "10 TB = 10 × 10¹² bytes × 8 = 8 × 10¹³ bits. At 10⁹ bits/sec: 8 × 10¹³ ÷ 10⁹ = 80,000 seconds. 80,000 ÷ 3,600 ≈ 22 hours. The usual trap is forgetting the bytes-to-bits factor of 8, which gets you an answer 8x too small. This is also why very large migrations sometimes ship physical drives instead."
+  }
+]
